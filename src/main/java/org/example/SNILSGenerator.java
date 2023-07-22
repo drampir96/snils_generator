@@ -37,8 +37,15 @@ public class SNILSGenerator {
 
         try (FileWriter fileWriter = new FileWriter("datapull.csv", false)) {
             for (int i = 0; i < poolSize; i++) {
+                String[] fio = new String[0];
+                while (fio.length != 3) {
+                    String fullName = ruFaker.name().fullName();
+                    fio = fullName.split(" ");
+                }
                 Person person = Person.builder()
-                        .fio(ruFaker.name().fullName())
+                        .lastName(fio[0])
+                        .firstName(fio[1])
+                        .patronymic(fio[2])
                         .phone(phoneList.get(i))
                         .email(enFaker.internet().emailAddress())
                         .snils(snilsList.get(i))
