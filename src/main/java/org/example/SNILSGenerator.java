@@ -1,8 +1,9 @@
 package org.example;
 
-import com.github.javafaker.Faker;
-import org.example.entity.Person;
 
+import org.example.entity.gender.Female;
+import org.example.entity.gender.Male;
+import org.example.entity.Person;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -12,12 +13,12 @@ import java.util.*;
 public class SNILSGenerator {
 
     public static void main(String[] args) {
-        Locale ruLocale = new Locale("ru");
-        Locale enLocale = new Locale("en");
-        Faker ruFaker = new Faker(ruLocale);
-        Faker enFaker = new Faker(enLocale);
 
-        int poolSize = 2;
+        Male male = new Male();
+        Female female = new Female();
+        final String header = "lastName,firstName,patronymic,phone,email,snils,birthday\n";
+
+        int poolSize = 1000;
 
         // Генерируем пул СНИЛСа (distinct)
         Set<String> snilsSet = new TreeSet<>();
@@ -36,22 +37,31 @@ public class SNILSGenerator {
         List<Long> phoneList = new ArrayList<>(phoneSet);
 
         try (FileWriter fileWriter = new FileWriter("datapull.csv", false)) {
+            fileWriter.append(header);
             for (int i = 0; i < poolSize; i++) {
-                String[] fio = new String[0];
-                while (fio.length != 3) {
-                    String fullName = ruFaker.name().fullName();
-                    fio = fullName.split(" ");
+                if (i % 2 == 0) {
+                    Person person = Person.builder()
+                            .secondName(male.secondName())
+                            .firstName(male.firsName())
+                            .patronymic(male.patronymic())
+                            .phone(phoneList.get(i))
+                            .email("user"+i+"@mail.ru")
+                            .snils(snilsList.get(i))
+                            .birthday(generateBirthday())
+                            .build();
+                    fileWriter.append(person.toString());
+                } else {
+                    Person person = Person.builder()
+                            .secondName(female.secondName())
+                            .firstName(female.firsName())
+                            .patronymic(female.patronymic())
+                            .phone(phoneList.get(i))
+                            .email("user"+i+"@mail.ru")
+                            .snils(snilsList.get(i))
+                            .birthday(generateBirthday())
+                            .build();
+                    fileWriter.append(person.toString());
                 }
-                Person person = Person.builder()
-                        .lastName(fio[0])
-                        .firstName(fio[1])
-                        .patronymic(fio[2])
-                        .phone(phoneList.get(i))
-                        .email(enFaker.internet().emailAddress())
-                        .snils(snilsList.get(i))
-                        .birthday(generateBirthday())
-                        .build();
-                fileWriter.append(person.toString());
             }
             fileWriter.flush(); // Очищаем буфер потока
         } catch (IOException e) {
