@@ -22,16 +22,14 @@ public class MainSnilsGenerator {
         // Генерируем пул СНИЛСа (distinct)
         Set<String> snilsSet = new TreeSet<>();
         while (snilsSet.size() < poolSize) {
-            String snils = Utils.generateSNILS();
-            snilsSet.add(snils);
+            snilsSet.add(Utils.generateSNILS());
         }
         List<String> snilsList = new ArrayList<>(snilsSet);
 
         // Генерируем пул телефонов (distinct)
         Set<Long> phoneSet = new TreeSet<>();
         while (phoneSet.size() < poolSize) {
-            Long phone = Utils.generatePhoneNumber();
-            phoneSet.add(phone);
+            phoneSet.add(Utils.generatePhoneNumber());
         }
         List<Long> phoneList = new ArrayList<>(phoneSet);
 
